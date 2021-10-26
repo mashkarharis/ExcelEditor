@@ -1,0 +1,31 @@
+{
+  "name": "ExcelEditor",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon app.js",
+    "ui": "browser-sync start --config bs-config.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AISuperTechnologies/ExcelEditor.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/AISuperTechnologies/ExcelEditor/issues"
+  },
+  "homepage": "https://github.com/AISuperTechnologies/ExcelEditor#readme",
+  "dependencies": {
+    "express": "^4.17.1",
+    "nodejs": "0.0.0",
+    "nodemon": "^2.0.14",
+    "pug": "^3.0.2"
+  },
+  "devDependencies": {
+    "browser-sync": "^2.27.5"
+  }
+}
