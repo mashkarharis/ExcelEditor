@@ -3,7 +3,7 @@ const express = require('express')
 var xml_route = express()
 
 xml_route.get('/view', function (req, res) {
-    res.send('Upload XML UI')
+    res.render("xml_view", { title: "XML" });
 })
 
 module.exports = xml_route;
