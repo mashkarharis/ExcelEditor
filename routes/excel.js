@@ -1,6 +1,7 @@
 var express = require('express')
-var router = express.Router()
+var excel_route = express()
 
-router.get('/view', function (req, res) {
+excel_route.get('/view', function (req, res) {
     res.send('Upload excel UI')
 })
+module.exports = excel_route;

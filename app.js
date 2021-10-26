@@ -9,13 +9,11 @@ app.use(express.static(path.join(__dirname, "public")));
 var xml = require('./routes/xml')
 var excel = require('./routes/excel')
 
-app.use('/xml', xml)
-app.use('/excel', excel)
-
 app.get("/", (req, res) => {
     res.render("index", { title: "Home" });
 });
-
+app.use('/xml', xml)
+app.use('/excel', excel)
 
 
 app.listen(port, () => console.log("Listening on port 8000"))
