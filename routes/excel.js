@@ -8,6 +8,7 @@ let xmlParser = require('xml2json');
 var firebase = require('firebase/app');
 var database = require('firebase/database');
 let xlsx = require('json-as-xlsx')
+const path = require('path')
 
 const firebaseConfig = {
     apiKey: "AIzaSyCblNIxjZF4kKUbNL8UqHhXTeEjkA5XcUQ",
@@ -81,46 +82,17 @@ excel_route.post('/convert', upload.single('excel'), async function (req, res, n
             final_xlsx.push(xlsx_sheet)
         });
         console.log(JSON.stringify(final_xlsx))
-
+        const name = Date.now()
         let settings = {
-            fileName: 'MySpreadsheet', // Name of the spreadsheet
+            fileName: 'downloads/' + name, // Name of the spreadsheet
             extraLength: 3, // A bigger number means that columns will be wider
             writeOptions: {} // Style options from https://github.com/SheetJS/sheetjs#writing-options
         }
 
-        xlsx(final_xlsx, settings)
-
-        // const data = await fs.readFileSync(req.file.path, 'utf8')
-        // sources_targets = JSON.parse(xmlParser.toJson(data))['xliff']['file']['body']['trans-unit']
-        // if (!Array.isArray(sources_targets)) {
-        //     var source = sources_targets['source']['$t']
-        //     var target = sources_targets['target']['$t']
-
-        //     if (source != null && target != null) {
-        //         dict[source] = target
-        //     }
-
-        // } else {
-        //     sources_targets.forEach(element => {
-        //         var source = element['source']['$t'].toLowerCase()
-        //         var target = element['target']['$t']
-
-        //         if (source != null && target != null) {
-        //             dict[source] = target
-        //         }
-        //     });
-
-        // }
-        // console.log("File Processed Successfully")
-
-
-        // // Firebase
-        // console.log("Writing to Database Started")
-
-        // console.log("Writing to Database Finished")
+        await xlsx(final_xlsx, settings)
 
         res.status(200)
-        res.send("File Converted Sucessfully")
+        res.sendFile(path.join(__dirname, "downloads", name + ".xlsx"))
         res.end()
         return
 
