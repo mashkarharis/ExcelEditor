@@ -23,7 +23,8 @@ xml_route.get('/view', function (req, res) {
 xml_route.post('/upload', upload.single('xml'), async function (req, res, next) {
     try {
         // File Type Checking
-        if (req.file.mimetype != 'application/xml') {
+        console.log(req.file)
+        if (!(req.file.mimetype == 'application/xml' || req.file.mimetype == 'text/xml')) {
             res.status(400)
             res.send("only XML are allowed")
             res.end()

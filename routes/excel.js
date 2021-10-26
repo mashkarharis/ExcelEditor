@@ -25,6 +25,7 @@ excel_route.get('/view', function (req, res) {
 
 excel_route.post('/convert', upload.single('excel'), async function (req, res, next) {
     try {
+        console.log(req.file)
         // Firebase Initialize
         const firebase_app = await firebase.initializeApp(firebaseConfig);
         const fire_database = await database.getDatabase(firebase_app)
@@ -91,9 +92,12 @@ excel_route.post('/convert', upload.single('excel'), async function (req, res, n
 
         await xlsx(final_xlsx, settings)
 
-        res.status(200)
-        res.sendFile(path.join(__dirname, "downloads", name + ".xlsx"))
-        res.end()
+        //res.status(200)
+        //res.status(200).render('excel_view', { key: path.join(__dirname, "downloads", name + ".xlsx") })
+
+        // res.sendFile(path.join(__dirname, "downloads", name + ".xlsx"))
+        res.download(path.join(__dirname, "downloads", name + ".xlsx"))
+        // res.end()
         return
 
 
