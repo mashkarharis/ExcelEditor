@@ -8,20 +8,20 @@
 	  datatype="javapropertyresourcebundle">
 	<body>
 	   <trans-unit id="1" resname="welcome">
-	      <source xml:lang="en">going</source>
-	      <target xml:lang="fr">හ්බා</target>
+	      <source xml:lang="en">country</source>
+	      <target xml:lang="fr">ඩඇ‌ඩ</target>
 	   </trans-unit>
        <trans-unit id="1" resname="welcome">
-	      <source xml:lang="en">do it</source>
-	      <target xml:lang="fr">ඩානස ඒසි</target>
+	      <source xml:lang="en">male</source>
+	      <target xml:lang="fr">ඩරජ</target>
 	   </trans-unit>
        <trans-unit id="1" resname="welcome">
-	      <source xml:lang="en">eat t</source>
-	      <target xml:lang="fr">චදබ යා</target>
+	      <source xml:lang="en">female</source>
+	      <target xml:lang="fr">චකද</target>
 	   </trans-unit>
        <trans-unit id="1" resname="welcome">
-	      <source xml:lang="en">eat T</source>
-	      <target xml:lang="fr">චදබ ඩය</target>
+	      <source xml:lang="en">first name</source>
+	      <target xml:lang="fr">පදච ඉට</target>
 	   </trans-unit>
 
 	</body>

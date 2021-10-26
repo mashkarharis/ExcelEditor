@@ -1,11 +1,14 @@
 var express = require('express')
 var excel_route = express()
 const multer = require('multer')
+const excelToJson = require('convert-excel-to-json');
 const upload = multer({ dest: 'uploads/' })
 const fs = require('fs')
 let xmlParser = require('xml2json');
 var firebase = require('firebase/app');
 var database = require('firebase/database');
+let xlsx = require('json-as-xlsx')
+
 const firebaseConfig = {
     apiKey: "AIzaSyCblNIxjZF4kKUbNL8UqHhXTeEjkA5XcUQ",
     authDomain: "excelconverter-52339.firebaseapp.com",
@@ -21,49 +24,103 @@ excel_route.get('/view', function (req, res) {
 
 excel_route.post('/convert', upload.single('excel'), async function (req, res, next) {
     try {
+        // Firebase Initialize
+        const firebase_app = await firebase.initializeApp(firebaseConfig);
+        const fire_database = await database.getDatabase(firebase_app)
         // File Type Checking
-        if (req.file.mimetype != 'application/xml') {
+        if (req.file.mimetype != 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet') {
             res.status(400)
-            res.send("only XML are allowed")
+            res.send("only XLSX are allowed")
             res.end()
             return
         }
         console.log("File Validated Sucessfully")
+        // Load Dictionary
+        const wordstore = (await database.get(database.ref(fire_database, '/wordstore'))).toJSON();
+        //console.log(wordstore)
         // Processing Data
-        var dict = {}
-        const data = await fs.readFileSync(req.file.path, 'utf8')
-        sources_targets = JSON.parse(xmlParser.toJson(data))['xliff']['file']['body']['trans-unit']
-        if (!Array.isArray(sources_targets)) {
-            var source = sources_targets['source']['$t']
-            var target = sources_targets['target']['$t']
+        const result = excelToJson({
+            source: fs.readFileSync(req.file.path)
+        });
+        // Get sheets
+        var sheets = Object.keys(result)
+        // define data
+        let final_xlsx = []
 
-            if (source != null && target != null) {
-                dict[source] = target
-            }
+        // iterate each sheets
+        sheets.forEach(id => {
+            var xlsx_sheet = {}
+            var columns = []
+            var content = []
+            var sheet = result[id]
+            xlsx_sheet["sheet"] = id
+            var row_no = 0
+            sheet.forEach((row) => {
 
-        } else {
-            sources_targets.forEach(element => {
-                var source = element['source']['$t'].toLowerCase()
-                var target = element['target']['$t']
+                var cell_ids = Object.keys(row)
+                cell_ids.forEach(cell => {
+                    var field = row[cell].toString().toLowerCase()
+                    //console.log(field in Object.keys(wordstore))
+                    if (Object.keys(wordstore).includes(field)) {
+                        //console.log(field)
 
-                if (source != null && target != null) {
-                    dict[source] = target
+                        row[cell] = wordstore[field]
+                    }
+                    if (row_no == 0) {
+                        columns.push({ 'label': row[cell], 'value': cell })
+                    }
+
+                });
+                if (row_no != 0) {
+                    content.push(row)
                 }
-            });
+                row_no += 1
+            })
+            xlsx_sheet['columns'] = columns
+            xlsx_sheet['content'] = content
+            final_xlsx.push(xlsx_sheet)
+        });
+        console.log(JSON.stringify(final_xlsx))
 
+        let settings = {
+            fileName: 'MySpreadsheet', // Name of the spreadsheet
+            extraLength: 3, // A bigger number means that columns will be wider
+            writeOptions: {} // Style options from https://github.com/SheetJS/sheetjs#writing-options
         }
-        console.log("File Processed Successfully")
+
+        xlsx(final_xlsx, settings)
+
+        // const data = await fs.readFileSync(req.file.path, 'utf8')
+        // sources_targets = JSON.parse(xmlParser.toJson(data))['xliff']['file']['body']['trans-unit']
+        // if (!Array.isArray(sources_targets)) {
+        //     var source = sources_targets['source']['$t']
+        //     var target = sources_targets['target']['$t']
+
+        //     if (source != null && target != null) {
+        //         dict[source] = target
+        //     }
+
+        // } else {
+        //     sources_targets.forEach(element => {
+        //         var source = element['source']['$t'].toLowerCase()
+        //         var target = element['target']['$t']
+
+        //         if (source != null && target != null) {
+        //             dict[source] = target
+        //         }
+        //     });
+
+        // }
+        // console.log("File Processed Successfully")
 
 
-        // Firebase
-        console.log("Writing to Database Started")
-        const firebase_app = await firebase.initializeApp(firebaseConfig);
-        const fire_database = await database.getDatabase(firebase_app)
-        await database.update(database.ref(fire_database, '/wordstore'), dict);
-        console.log("Writing to Database Finished")
+        // // Firebase
+        // console.log("Writing to Database Started")
+
+        // console.log("Writing to Database Finished")
 
         res.status(200)
-        res.send("New words added Successfully")
+        res.send("File Converted Sucessfully")
         res.end()
         return
 
