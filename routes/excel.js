@@ -4,7 +4,6 @@ const multer = require('multer')
 const excelToJson = require('convert-excel-to-json');
 const upload = multer({ dest: 'uploads/' })
 const fs = require('fs')
-let xmlParser = require('xml2json');
 var firebase = require('firebase/app');
 var database = require('firebase/database');
 let xlsx = require('json-as-xlsx')
@@ -32,7 +31,7 @@ excel_route.post('/convert', upload.single('excel'), async function (req, res, n
         // File Type Checking
         if (req.file.mimetype != 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet') {
             res.status(400)
-            res.send("only XLSX are allowed")
+            res.render("excel_view", { error: "Only XLSX are allowed" });
             res.end()
             return
         }
@@ -103,7 +102,7 @@ excel_route.post('/convert', upload.single('excel'), async function (req, res, n
 
     } catch (ex) {
         res.status(500)
-        res.send("Something Went Wrong : " + ex)
+        res.render("excel_view", { error: "Something Went Wrong" + ex});
         res.end()
         return
 

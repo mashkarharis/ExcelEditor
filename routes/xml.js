@@ -25,8 +25,9 @@ xml_route.post('/upload', upload.single('xml'), async function (req, res, next) 
         // File Type Checking
         console.log(req.file)
         if (!(req.file.mimetype == 'application/xml' || req.file.mimetype == 'text/xml')) {
-            res.status(400)
-            res.send("only XML are allowed")
+            // res.status(400)
+            // res.send("only XML are allowed")
+            res.status(400).render("xml_view", { error: "Only XML are allowed" });
             res.end()
             return
         }
@@ -56,7 +57,6 @@ xml_route.post('/upload', upload.single('xml'), async function (req, res, next) 
         }
         console.log("File Processed Successfully")
 
-
         // Firebase
         console.log("Writing to Database Started")
         const firebase_app = await firebase.initializeApp(firebaseConfig);
@@ -65,22 +65,16 @@ xml_route.post('/upload', upload.single('xml'), async function (req, res, next) 
         console.log("Writing to Database Finished")
 
         res.status(200)
-        res.send("New words added Successfully")
+        res.render("xml_view", { success: "New words added Successfully" });
         res.end()
         return
-
-
     } catch (ex) {
         res.status(500)
-        res.send("Something Went Wrong : " + ex)
+        res.render("xml_view", { error: "Something Went Wrong" + ex});
         res.end()
         return
 
     }
-
-
-
 })
-
 
 module.exports = xml_route;
