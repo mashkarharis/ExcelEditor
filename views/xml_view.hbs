@@ -22,27 +22,44 @@
       padding: 0;
     }
   </style>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 </head>
 
 <body>
-  {{#if error}}
-    <div class="alert alert-danger" role="alert">
-      {{error}}
-    </div>
-  {{/if}}
+  <div class="fixed-bottom w-25 p-3">
+      {{#if error}}
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+          <strong>{{error}}</strong>
+          <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+      {{/if}}
 
-  {{#if success}}
-    <div class="alert alert-success" role="alert">
-      {{success}}
-    </div>
-  {{/if}}
-
+      {{#if success}}
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+          <strong>{{success}}</strong>
+          <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+      {{/if}}
+  </div>
   <div class="d-flex justify-content-center align-items-center" id="hero">
+    <nav aria-label="breadcrumb" class="fixed-top">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="/">Home</a></li>
+        <li class="breadcrumb-item active" aria-current="page">XML Uploader</li>
+      </ol>
+    </nav>
     <form method="POST" action="/xml/upload/" enctype="multipart/form-data" class="w-25 p-3">
-      {{!-- <div class="input-group mb-3">
+      <div class="input-group mb-3">
         <span class="input-group-text" id="basic-addon1">Security Code</span>
         <input name="feedback" type="text" class="form-control">
-      </div> --}}
+      </div>
       <div class="mb-3">
         <label for="formFile" class="form-label">XML file</label>
         <input name="xml" class="form-control" type="file" id="xml">

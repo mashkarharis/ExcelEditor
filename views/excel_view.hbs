@@ -21,23 +21,39 @@
       padding: 0;
     }
   </style>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 </head>
 
 <body>
-  <div>
-    {{#if error}}
-      <div class="alert alert-danger" role="alert">
-        {{error}}
-      </div>
-    {{/if}}
+  <div class="fixed-bottom">
+      {{#if error}}
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+          <strong>{{error}}</strong>
+          <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+      {{/if}}
 
-    {{#if success}}
-      <div class="alert alert-success" role="alert">
-        {{success}}
-      </div>
-    {{/if}}
+      {{#if success}}
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+          <strong>{{success}}</strong>
+          <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+      {{/if}}
   </div>
   <div class="d-flex justify-content-center align-items-center" id="hero">
+    <nav aria-label="breadcrumb" class="fixed-top">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="/">Home</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Excel Converter</li>
+      </ol>
+    </nav>
     <form method="POST" action="/excel/convert/" enctype="multipart/form-data" class="w-25 p-3">
       <div class="mb-3">
         <label for="formFile" class="form-label">Xcel file</label>
