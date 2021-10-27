@@ -5,16 +5,10 @@ const multer = require('multer')
 const upload = multer({ dest: 'uploads/' })
 const fs = require('fs')
 let xmlParser = require('xml2json');
-var firebase = require('firebase/app');
-var database = require('firebase/database');
-const firebaseConfig = {
-    apiKey: "AIzaSyCblNIxjZF4kKUbNL8UqHhXTeEjkA5XcUQ",
-    authDomain: "excelconverter-52339.firebaseapp.com",
-    projectId: "excelconverter-52339",
-    storageBucket: "excelconverter-52339.appspot.com",
-    messagingSenderId: "1089992563454",
-    appId: "1:1089992563454:web:8a3c6866982866934163af"
-};
+var admin = require("firebase-admin");
+var serviceAccount = require("../service_account.json");
+
+
 
 xml_route.get('/view', function (req, res) {
     res.render("xml_view", { title: "XML" });
@@ -59,19 +53,33 @@ xml_route.post('/upload', upload.single('xml'), async function (req, res, next) 
 
         // Firebase
         console.log("Writing to Database Started")
-        const firebase_app = await firebase.initializeApp(firebaseConfig);
-        const fire_database = await database.getDatabase(firebase_app)
-        await database.update(database.ref(fire_database, '/wordstore'), dict);
+        if (!admin.apps.length) {
+            await admin.initializeApp({
+                apiKey: "AIzaSyCblNIxjZF4kKUbNL8UqHhXTeEjkA5XcUQ",
+                authDomain: "excelconverter-52339.firebaseapp.com",
+                projectId: "excelconverter-52339",
+                storageBucket: "excelconverter-52339.appspot.com",
+                messagingSenderId: "1089992563454",
+                appId: "1:1089992563454:web:8a3c6866982866934163af",
+                credential: admin.credential.cert(serviceAccount),
+                databaseURL: "https://excelconverter-52339-default-rtdb.firebaseio.com"
+            });
+
+        }
+
+        //const firebase_app = await firebase.initializeApp(firebaseConfig);
+        const fire_database = await admin.database()
+
+        await fire_database.ref('/wordstore').update(dict)
+        //await database.update(database.ref(fire_database, '/wordstore'), dict);
         console.log("Writing to Database Finished")
 
         res.status(200)
         res.render("xml_view", { success: "New words added Successfully" });
-        res.end()
         return
     } catch (ex) {
         res.status(500)
-        res.render("xml_view", { error: "Something Went Wrong" + ex});
-        res.end()
+        res.render("xml_view", { error: "Something Went Wrong" + ex });
         return
 
     }
