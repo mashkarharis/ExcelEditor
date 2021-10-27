@@ -15,6 +15,9 @@ excel_route.get('/view', function (req, res) {
 
 excel_route.post('/convert', upload.single('excel'), async function (req, res, next) {
     try {
+        if (req.file == null) {
+            res.render("excel_view", { error: "Please Choose a .xlsx file" });
+        }
         console.log(req.file)
         // Firebase Initialize
         if (!admin.apps.length) {
@@ -33,9 +36,7 @@ excel_route.post('/convert', upload.single('excel'), async function (req, res, n
         const fire_database = await admin.database()
         // File Type Checking
         if (req.file.mimetype != 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet') {
-
             res.render("excel_view", { error: "Only XLSX are allowed" });
-
         }
         console.log("File Validated Sucessfully")
         // Load Dictionary

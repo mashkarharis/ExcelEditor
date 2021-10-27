@@ -16,6 +16,10 @@ xml_route.get('/view', function (req, res) {
 
 xml_route.post('/upload', upload.single('xml'), async function (req, res, next) {
     try {
+        console.log(req.body["securitycode"])
+        if (req.file == null) {
+            res.render("xml_view", { error: "Please Choose a .xml file" });
+        }
         // File Type Checking
         console.log(req.file)
         if (!(req.file.mimetype == 'application/xml' || req.file.mimetype == 'text/xml')) {
@@ -29,7 +33,7 @@ xml_route.post('/upload', upload.single('xml'), async function (req, res, next) 
         const data = await fs.readFileSync(req.file.path, 'utf8')
         sources_targets = JSON.parse(xmlParser.toJson(data))['xliff']['file']['body']['trans-unit']
         if (!Array.isArray(sources_targets)) {
-            var source = sources_targets['source']['$t']
+            var source = sources_targets['source']['$t'].toLowerCase()
             var target = sources_targets['target']['$t']
 
             if (source != null && target != null) {
@@ -69,7 +73,7 @@ xml_route.post('/upload', upload.single('xml'), async function (req, res, next) 
         const fire_database = await admin.database()
         var secretkey = await (await fire_database.ref('/secret').get()).val()
         console.log(secretkey)
-        if (secretkey != "Xe32FG") {
+        if (secretkey != req.body["securitycode"]) {
             res.render("xml_view", { error: "Invalid Secret Key" });
             return
         }
@@ -81,7 +85,6 @@ xml_route.post('/upload', upload.single('xml'), async function (req, res, next) 
 
     } catch (ex) {
         res.render("xml_view", { error: "Something Went Wrong" + ex });
-
     }
 })
 
