@@ -21,9 +21,7 @@ xml_route.post('/upload', upload.single('xml'), async function (req, res, next) 
         if (!(req.file.mimetype == 'application/xml' || req.file.mimetype == 'text/xml')) {
             // res.status(400)
             // res.send("only XML are allowed")
-            res.status(400).render("xml_view", { error: "Only XML are allowed" });
-            res.end()
-            return
+            res.render("xml_view", { error: "Only XML are allowed" });
         }
         console.log("File Validated Sucessfully")
         // Processing Data
@@ -69,18 +67,20 @@ xml_route.post('/upload', upload.single('xml'), async function (req, res, next) 
 
         //const firebase_app = await firebase.initializeApp(firebaseConfig);
         const fire_database = await admin.database()
-
+        var secretkey = await (await fire_database.ref('/secret').get()).val()
+        console.log(secretkey)
+        if (secretkey != "Xe32FG") {
+            res.render("xml_view", { error: "Invalid Secret Key" });
+            return
+        }
         await fire_database.ref('/wordstore').update(dict)
         //await database.update(database.ref(fire_database, '/wordstore'), dict);
         console.log("Writing to Database Finished")
 
-        res.status(200)
         res.render("xml_view", { success: "New words added Successfully" });
-        return
+
     } catch (ex) {
-        res.status(500)
         res.render("xml_view", { error: "Something Went Wrong" + ex });
-        return
 
     }
 })

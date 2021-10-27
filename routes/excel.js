@@ -33,10 +33,9 @@ excel_route.post('/convert', upload.single('excel'), async function (req, res, n
         const fire_database = await admin.database()
         // File Type Checking
         if (req.file.mimetype != 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet') {
-            res.status(400)
+
             res.render("excel_view", { error: "Only XLSX are allowed" });
-            res.end()
-            return
+
         }
         console.log("File Validated Sucessfully")
         // Load Dictionary
@@ -99,9 +98,7 @@ excel_route.post('/convert', upload.single('excel'), async function (req, res, n
 
 
     } catch (ex) {
-        res.status(500)
         res.render("excel_view", { error: "Something Went Wrong" + ex });
-        res.end()
         return
 
     }
